@@ -1,0 +1,108 @@
+ADT(Abstract Datatype)
+
+Aim: Implementation of ORDBMS using ADT (Abstract Data Types), References, etc.
+
+ Create ADT for name and address. 
+
+create type type_name13 As object 
+(
+	fname varchar(20), 
+	mname varchar(20), 
+	lname varchar(20)
+); 
+/
+
+
+create type type_address13 As object
+(
+	street varchar(20), 
+	city varchar(20), 
+	pincode number(10)
+);
+/
+
+Create table customer with fields cid(number), cname(type_name), cadd(type_add), cphone(number)
+
+ Creating table:
+
+Create table customer013 
+(
+	c_id number(5) primary key,
+	c_name type_name,
+	c_add type_address,
+	c_phno number(10)
+);
+
+ Inserting data:
+
+insert into customer013
+value(1, type_name('Varsha', 'S', 'Atul'),
+type_address('Sainagar', 'Mumbai', 400042),123456789);
+ 
+ Selecting data from table:
+
+select * from customer013;
+
+ Select street value of customer whose cid=1:
+
+select c.c_add.street from customer013 c where c_id=1;
+
+ Select fname of customer whose cid=1:
+
+select c.c_name.fname from customer013 c where c_id=1;
+
+ Select lname of customer whose cid=1:
+
+select c_id, c.c_name.lname from customer013 c;
+
+ Select cname of customer:
+
+select c_name from customer013;
+
+ Select full name of customer: 
+
+select c.c_name.fname||' ' ||c.c_name.mname||' '||c.c_name.lname from customer013 c;
+
+REF and DREF function:
+
+ Creating object tables:
+
+create or replace type ANIMAL_TY12 as object(Breed varchar2(25),
+name varchar2(25),
+BirthDate DATE
+);
+/
+
+ Creating table:
+
+create table ANIMAL12 of ANIMAL_TY12;
+
+ Inserting rows into object tables
+
+insert into ANIMAL12 values(ANIMAL_TY12('MULE', 'FRANCES', '01-APR-02'));
+insert into ANIMAL12 values(ANIMAL_TY12('DOG', 'BENJI', '03-SEP-01'));
+
+ The REF function:
+
+select REF(A) from ANIMAL12 A;
+
+ Using the DEREF function:
+
+create table KEPPER12(KeeperName varchar(25), AnimalKept REF ANIMAL_TY12);
+
+describe KEEPER12
+
+ Value Insertion:
+
+insert into KEEPER12 select 'CATHERINE', REF(A) from ANIMAL12 A where Name='BENJI';
+
+select * from KEEPER12;
+
+select KeeperName, DEREF(K.AnimalKept) from KEEPER12 K;
+
+
+
+
+
+
+

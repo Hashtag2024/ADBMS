@@ -1,0 +1,139 @@
+Analytical functions:
+Q) Create table employee with fields emp_no,dep_no,emp_name,dob,salary,comm,job.
+
+SQL> CREATE TABLE employee
+(emp_no NUMBER(10),
+dep_no NUMBER(10),
+emp_name VARCHAR(25),
+dob DATE,
+salary NUMBER(10),
+comm NUMBER(10),
+job VARCHAR(25)
+);
+Table Created
+
+
+
+INSERT INTO employee values(1,10,'Durga',to_date('03/11/85','dd/mm/yyyy'), to_date('23/02/2000','dd/mm/yyyy'), 5000, 2000, 'clerk');
+INSERT INTO employee values(2,11,'Nirali',to_date('09/12/99','dd/mm/yyyy'), to_date('21/04/2000','dd/mm/yyyy'), 2000, 3000,'Manager');
+INSERT INTO employee values(3,12,'Pooja',to_date('05/02/99','dd/mm/yyyy'), to_date('8/03/2000','dd/mm/yyyy'), 7000, 2000,'Team lead');
+INSERT INTO employee values(4,17,'Sanjana',to_date('08/05/94','dd/mm/yyyy'), to_date('10/01/2000','dd/mm/yyyy'), 1000, 4000, 'junior developer');
+INSERT INTO employee values(5,17,'Sakshi',to_date('27/08/97','dd/mm/yyyy'), to_date('18/02/2000','dd/mm/yyyy'), 9000, 1000,'junior developer');
+INSERT INTO employee values(6,18,'Harshala',to_date('19/06/87','dd/mm/yyyy'), to_date('25/03/2000','dd/mm/yyyy'), 3000,2000, 'senior developer');
+INSERT INTO employee values(7,16,'John',to_date('28/02/86','dd/mm/yyyy'), to_date('2/04/2000','dd/mm/yyyy'), 6000, 3000,'Head manager');
+INSERT INTO employee values(8,17,'Fedrick',to_date('30/07/99','dd/mm/yyyy'), to_date('27/02/2000','dd/mm/yyyy'), 4000, 1000,'junior developer');
+INSERT INTO employee values(9,18,'Locas',to_date('13/06/85','dd/mm/yyyy'), to_date('11/01/2000','dd/mm/yyyy'), 8000, 5000,'senior developer');
+INSERT INTO employee values(10,19,'Hemant',to_date('14/02/87','dd/mm/yyyy'), to_date('22/03/2000','dd/mm/yyyy'), 4000, 2000, 'guide');
+
+
+ROLLUP
+Q1) Display dep_no, job, job count, sum of salary group them up using a roll up function in the order of dep_no, job.
+
+select dep_no, job, count(*), sum(salary) from employee group by rollup(dep_no, job);
+
+
+CUBE
+Q1) Display dep_no,job, job count, sum of salary group them up using a cube function in the order of dep_no, job.
+
+select dep_no, job, count(*), sum(salary) from employee group by cube(dep_no, job);
+
+
+Number to each ROW
+Q1) Display emp_no,emp_name and salary from empoyee table and give numbers to each row.
+
+select rownum,emp_no,emp_name,salary from employee;
+
+Q2) Display emp_no, emp_name and ascending order of salary from employee table and give number to each row. 
+
+select rownum,emp_no,emp_name,salary from employee order by salary;
+
+Q3) Display emp_no, emp_name and descending order of salary from employee table and give number to each row. 
+
+select rownum,emp_no,emp_name,salary from employee order by salary desc;
+
+
+
+ROW_NUMBER()
+Q1) Use Row_number() analytical function to give numbering according to salary.
+
+select row_number() over(order by salary), emp_no,emp_name, salary from employee order by salary desc;
+
+
+RANK()
+Q1) Display eno, ename and salary from employee table and rank them according to ascending order of salary.
+
+select emp_no,emp_name,salary,rank() over (order by salary) from employee order by salary;
+
+
+
+DENSE_RANK()
+Q1) Display eno, name, salary from employee table and rank them according to ascending order of salary using dense_rank()
+
+select emp_no,emp_name,salary,dense_rank() over (order by salary) from employee order by salary;
+
+Q2) Display three highest salaried person.
+
+select * from (select dense_rank() over(order by salary desc)top,emp_name,emp_no,salary from employee) where top<=3;
+
+Q3) Partition by department_number
+
+select emp_no,dep_no,salary,comm,rank() over (partition by dep_no order by salary) as Rank from employee;
+
+Q4) Display details of employee and give ranking only for employee in dept_no 10
+
+select dense_rank()over(partition by dep_no order by salary)Rank, dep_no, emp_name, salary from employee where dep_no=10;
+
+Q5) Display name, job & salary and Rank the salary job wise
+
+select dense_rank()over(partition by job order by salary)Rank, job,emp_name, salary from employee order by job;
+
+Q6) Display information of employee & rank them for employee working as manager
+
+select dense_rank()over(partition by job order by salary)Rank,job,emp_name,salary from employee where job='manager';
+
+Q7) Display first five roecords of employee in descending order of salary
+
+select*from(select emp_no, emp_name, salary, dense_rank()over(order by salary desc)rank from employee) where rank<=5;
+
+
+
+
+LEAD()
+Q1) Display Employee details using Lead() analytical function.
+
+select emp_no,dob, lead(dob,1)over(order by dob)as “next” from employee;
+
+
+LAG()
+Q1) Display Employee details using Lag() analytical function.
+
+select emp_no,dob,lag(dob,1)over(order by dob)as “previous” from employee;
+
+
+
+FIRST
+select dep_no, salary, max(salary) keep(DENSE_RANK FIRST ORDER BY salary desc)over(PARTITION BY dep_no)"max" from employee;
+
+
+LAST
+select dep_no,salary,min(salary)keep(DENSE_RANK LAST ORDER BY salary desc)over(PARTITION BY dep_no)"min" from employee;
+
+
+
+UPDATE
+Q1) Update employee salary
+
+update Employee set salary=33000 where emp_no=102;
+
+
+NULL VALUES
+Q1) Inserting null value in commision
+
+insert into employee values(101,10,'TEJAS',TO_DATE('12/01/82','DD/MM/YYYY'),22000,null,'CLERK');
+
+Q2) Replace null values of commision by 1000 
+
+select emp_no,emp_name,salary,nvl(comm,1000) new_comm from employee order by comm desc;
+
+
+

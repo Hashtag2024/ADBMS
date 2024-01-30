@@ -1,0 +1,153 @@
+syntax:
+PARTITION BY LIST(LIST_EXPRESSION)(
+PARTITION partition_name VALUES(values),
+PARTITION partition_name VALUES(values),
+)
+
+create table sales3_list
+(saleman_id number(5),
+salesman_name varchar2(30),
+sales_state varchar2(20),
+sales_amount number(10),
+sales_date date)
+partition by list(sales_state)
+(
+partition sales3_west values('California','Hawai'),
+partition sales3_east values('New York','Virginia','Florida'),
+partition sales3_central values('Texas','Illinios'),
+partition sales3_other values(default)
+)
+enable row movement
+;
+
+Table created.
+
+
+INSERT INTO sales3_list values(1,'Durga','California',5000, to_date('23/02/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(2,'Nirali','Hawai',2000, to_date('21/04/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(3,'Pooja','Texas',7000, to_date('8/03/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(4,'Sanjana','Virginia',1000, to_date('10/01/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(5,'Sakshi','New York',9000, to_date('18/02/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(6,'Harshala','Bangkok',3000, to_date('25/03/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(7,'John','london',6000, to_date('2/04/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(8,'Fedrick','Texas',4000, to_date('27/02/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(9,'Locas','Hawai',8000, to_date('11/01/2000','dd/mm/yyyy'));
+INSERT INTO sales3_list values(10,'Hemant','Florida',4000, to_date('22/03/2000','dd/mm/yyyy'));
+
+1 row created.
+
+
+
+SQL> SELECT * FROM sales3_list;
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         1 Durga                          California                   5000
+23-FEB-00
+
+         2 Nirali                         Hawai                        2000
+21-APR-00
+
+         9 Locas                          Hawai                        8000
+11-JAN-00
+
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         4 Sanjana                        Virginia                     1000
+10-JAN-00
+
+         5 Sakshi                         New York                     9000
+18-FEB-00
+
+        10 Hemant                         Florida                      4000
+22-MAR-00
+
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         3 Pooja                          Texas                        7000
+08-MAR-00
+
+         8 Fedrick                        Texas                        4000
+27-FEB-00
+
+         6 Harshala                       Bangkok                      3000
+25-MAR-00
+
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         7 John                           london                       6000
+02-APR-00
+
+
+10 rows selected.
+
+
+
+
+SQL> SELECT * FROM sales3_list PARTITION(sales3_west);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         1 Durga                          California                   5000
+23-FEB-00
+
+         2 Nirali                         Hawai                        2000
+21-APR-00
+
+         9 Locas                          Hawai                        8000
+11-JAN-00
+
+
+SQL> SELECT * FROM sales3_list PARTITION(sales3_east);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         4 Sanjana                        Virginia                     1000
+10-JAN-00
+
+         5 Sakshi                         New York                     9000
+18-FEB-00
+
+        10 Hemant                         Florida                      4000
+22-MAR-00
+
+
+SQL> SELECT * FROM sales3_list PARTITION(sales3_central);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         3 Pooja                          Texas                        7000
+08-MAR-00
+
+         8 Fedrick                        Texas                        4000
+27-FEB-00
+
+
+SQL> SELECT * FROM sales3_list PARTITION(sales3_other);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_STATE          SALES_AMOUNT
+---------- ------------------------------ -------------------- ------------
+SALES_DAT
+---------
+         6 Harshala                       Bangkok                      3000
+25-MAR-00
+
+         7 John                           london                       6000
+02-APR-00

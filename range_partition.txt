@@ -1,0 +1,83 @@
+synatx:
+PARTITION BY RANGE(RANGE_EXPRESSION)(
+PARTITION partition_name VALUES LESS THAN (values),
+PARTITION partition_name VALUES LESS THAN (values),
+)
+
+
+create table sales3_range
+(saleman_id number(5),
+salesman_name varchar2(30),
+sales_amount number(10),
+sales_date date)
+PARTITION BY RANGE(sales_date)
+(
+PARTITION sales_jan2000 VALUES LESS THAN(to_date('01/02/2000','dd/mm/yyyy')),
+PARTITION sales_feb2000 VALUES LESS THAN(to_date('01/03/2000','dd/mm/yyyy')),
+PARTITION sales_mar2000 VALUES LESS THAN(to_date('01/04/2000','dd/mm/yyyy')),
+PARTITION sales_apr2000 VALUES LESS THAN(to_date('01/05/2000','dd/mm/yyyy'))
+);
+
+Table created.
+
+
+INSERT INTO sales3_range values(1,'Durga',5000, to_date('23/02/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(2,'Nirali',2000, to_date('21/04/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(3,'Pooja',7000, to_date('8/03/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(4,'Sanjana',1000, to_date('10/01/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(5,'Sakshi',9000, to_date('18/02/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(6,'Harshala',3000, to_date('25/03/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(7,'John',6000, to_date('2/04/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(8,'Fedrick',4000, to_date('27/02/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(9,'Locas',8000, to_date('11/01/2000','dd/mm/yyyy'));
+INSERT INTO sales3_range values(10,'Hemant',4000, to_date('22/03/2000','dd/mm/yyyy'));
+1 row created.
+
+
+
+SELECT * FROM sales3_range;
+
+SALEMAN_ID SALESMAN_NAME                  SALES_AMOUNT SALES_DAT
+---------- ------------------------------ ------------ ---------
+         4 Sanjana                                1000 10-JAN-00
+         9 Locas                                  8000 11-JAN-00
+         1 Durga                                  5000 23-FEB-00
+         5 Sakshi                                 9000 18-FEB-00
+         8 Fedrick                                4000 27-FEB-00
+         3 Pooja                                  7000 08-MAR-00
+         6 Harshala                               3000 25-MAR-00
+        10 Hemant                                 4000 22-MAR-00
+         2 Nirali                                 2000 21-APR-00
+         7 John                                   6000 02-APR-00
+
+10 rows selected.
+
+SQL> SELECT * FROM sales3_range PARTITION(sales_feb2000);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_AMOUNT SALES_DAT
+---------- ------------------------------ ------------ ---------
+         1 Durga                                  5000 23-FEB-00
+         5 Sakshi                                 9000 18-FEB-00
+         8 Fedrick                                4000 27-FEB-00
+
+SQL> SELECT * FROM sales3_range PARTITION(sales_jan2000);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_AMOUNT SALES_DAT
+---------- ------------------------------ ------------ ---------
+         4 Sanjana                                1000 10-JAN-00
+         9 Locas                                  8000 11-JAN-00
+
+SQL> SELECT * FROM sales3_range PARTITION(sales_mar2000);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_AMOUNT SALES_DAT
+---------- ------------------------------ ------------ ---------
+         3 Pooja                                  7000 08-MAR-00
+         6 Harshala                               3000 25-MAR-00
+        10 Hemant                                 4000 22-MAR-00
+
+SQL> SELECT * FROM sales3_range PARTITION(sales_apr2000);
+
+SALEMAN_ID SALESMAN_NAME                  SALES_AMOUNT SALES_DAT
+---------- ------------------------------ ------------ ---------
+         2 Nirali                                 2000 21-APR-00
+         7 John                                   6000 02-APR-00
